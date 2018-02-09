@@ -29,11 +29,10 @@ from utils import visualization_utils as vis_util
 # ## Variables
 #
 # Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_CKPT` to point to a new .pb file.
-MODEL_NAME = 'tennisball_graph3'
+MODEL_NAME = 'tennisball_graph'
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
-# PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception.pb'
-PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception.pb'
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph1.pb'
 
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join('data', 'tb_label_map.pbtxt')
@@ -55,8 +54,8 @@ category_index = label_map_util.create_category_index(categories)
 
 # # Detection
 # Choose video feed to be a video file (e.g. 'path/to/file') or a camera input (e.g. 0 or 1)
-cap = cv2.VideoCapture('/home/seth/Videos/vid3.mp4')
-# cap = cv2.VideoCapture('/home/seth/Videos/urc_autonomy/A4.MOV')
+# cap = cv2.VideoCapture('/home/seth/Videos/vid3.mp4')
+cap = cv2.VideoCapture('/home/seth/Videos/drone7.mp4')
 # cap = cv2.VideoCapture(1)
 
 with detection_graph.as_default():
@@ -73,7 +72,7 @@ with detection_graph.as_default():
     while cap.isOpened():
         ret, frame = cap.read()
         image_np = frame # use this line for any video feed that isn't the ZED
-        # image_np = frame[0:480, 0:640] # for using only the left camera feed if using ZED as input
+        #   image_np = frame[0:480, 0:640] # for using only the left camera feed if using ZED as input
 
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image_np, axis=0)
@@ -93,14 +92,14 @@ with detection_graph.as_default():
         box = boxes[0][0]
         im_h, im_w, _ = image_np.shape
         corners = (int(box[1]*im_w), int(box[0]*im_h), int(box[3]*im_w), int(box[2]*im_h))
-        if scores[0][0] > .50:
+        if scores[0][0] > .20:
             # Instead of fancy probability box, show simple rectangle
             cv2.rectangle(image_np, (corners[0], corners[1]), (corners[2], corners[3]), (255,0,0), 2)
         else:
             corners = (-1, -1, -1, -1)
         print str(corners) + ', {:1.2f}'.format(scores[0][0])
-        # cv2.imshow('object detection 3', cv2.resize(image_np, (640, 480)))
-        cv2.imshow('object detection 2', image_np)
+        # cv2.imshow('object detection 1', cv2.resize(image_np, (640, 480)))
+        cv2.imshow('object detection 1', image_np)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             cap.release()
