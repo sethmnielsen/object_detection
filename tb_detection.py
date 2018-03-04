@@ -30,11 +30,11 @@ from utils import visualization_utils as vis_util
 # ## Variables
 #
 # Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_CKPT` to point to a new .pb file.
-MODEL_NAME = 'tennisball_graph5-2'
+MODEL_NAME = 'tennisball_graph5'
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 # PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception.pb'
-PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception5-3.pb'
 
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join('data', 'tb_label_map.pbtxt')
