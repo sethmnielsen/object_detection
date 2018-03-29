@@ -3,6 +3,7 @@
 # Be sure to follow the [installation instructions]
 # (https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)
 # before you start.
+from __future__ import print_function
 from __future__ import division
 import numpy as np
 import os
@@ -30,11 +31,11 @@ from utils import visualization_utils as vis_util
 # ## Variables
 #
 # Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_CKPT` to point to a new .pb file.
-MODEL_NAME = 'tennisball_graph5'
+MODEL_NAME = 'tennisball_graph4'
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 # PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception.pb'
-PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception5-3.pb'
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph_inception.pb'
 
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join('data', 'tb_label_map.pbtxt')
@@ -56,23 +57,13 @@ category_index = label_map_util.create_category_index(categories)
 
 # # Detection
 # Choose video feed to be a video file (e.g. 'path/to/file') or a camera input (e.g. 0 or 1)
-<<<<<<< Updated upstream
-# cap = cv2.VideoCapture(os.path.expanduser('~/Videos/vid3.mp4'))
-cap = cv2.VideoCapture(os.path.expanduser('~/Videos/urc_autonomy/A4.MOV'))
-# cap = cv2.VideoCapture('/dev/videoZED')
-w = 1920
-h = 1080
-=======
 # cap = cv2.VideoCapture('/home/seth/Videos/vid3.mp4')
-cap = cv2.VideoCapture('/home/seth/Videos/urc_autonomy/A4.MOV')
+# cap = cv2.VideoCapture('/home/seth/Videos/urc_autonomy/A4.MOV')
 # cap = cv2.VideoCapture('/dev/videoZED')
 w = 640
 h = 480
->>>>>>> Stashed changes
-cap.set(3, w)
-cap.set(4, h)
-prev_score = 0
-
+count = 0
+speed = 0
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
     # Definite input and output Tensors for detection_graph
@@ -84,12 +75,17 @@ with detection_graph.as_default():
     detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
     detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
     num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-    while cap.isOpened():
-        for i in range(0):
-            _ = cap.grab()
-        ret, frame = cap.read()
-        image_np = frame # use this line for any video feed that isn't the ZED
-        # image_np = frame[0:h, 0:w] # for using only the left camera feed if using ZED as input
+    # while count <= 1791:
+    #     x = '0000'
+    #     path =  os.path.expanduser('~/Pictures/tbpics/')
+    #     filename = 'tb' + str(count).zfill(len(x)) + '.jpg'
+    path = os.path.expanduser('~/Pictures/Training/trainingset4/')
+    for filename in os.listdir(path):
+        if filename[-3:] == 'xml' or filename[:6] != 'sceneA':
+            continue
+
+
+        image_np = cv2.imread(path+filename)
 
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image_np, axis=0)
@@ -107,7 +103,6 @@ with detection_graph.as_default():
           # use_normalized_coordinates=True,
           # line_thickness=8)
         box = boxes[0][0]
-        print(boxes)
         im_h, im_w, _ = image_np.shape
         # corners is [x, y, x_max, y_max] (y-value increases downwards)
         corners = (int(box[1]*im_w), int(box[0]*im_h), int(box[3]*im_w), int(box[2]*im_h))
@@ -117,39 +112,38 @@ with detection_graph.as_default():
         y_max = corners[3]
         length = x_max-x
         height = y_max-y
-        raw_score = scores[0][0]
         squareness = 1 - abs(length-height) / (length+height)
-<<<<<<< Updated upstream
-        if squareness < 0:
-            raw_score = 0
-
-        alpha = 0.1
-        filt_score = (1-alpha)*prev_score + alpha*raw_score
-        prev_score = filt_score
-
-        if filt_score > .50:
-                cv2.putText(image_np,'{:2.2f}'.format(filt_score),(x, y-5),cv2.FONT_HERSHEY_SIMPLEX, 1., (0,0,255), 2)
-                cv2.rectangle(image_np, (x, y), (x_max, y_max), (0,0,255), 2)
-        elif raw_score > .50:
-                cv2.rectangle(image_np, (x, y), (x_max, y_max), (255,0,0), 2)
-        else:
-            corners = (-1, -1, -1, -1)
-        # print str(corners) + ', {:1.2f}'.format(filt_score)
-=======
         if scores[0][0] > .50 and squareness > .8:
                 # Instead of fancy probability box, show simple rectangle
-                # cv2.putText(image_np,"hello", (x,y), cv2.FONT_HERSHEY_TRIPLEX, 1, 255)
                 cv2.rectangle(image_np, (x, y), (x_max, y_max), (255,0,0), 2)
         else:
             corners = (-1, -1, -1, -1)
-        # print str(corners) + ', {:1.2f}'.format(scores[0][0])
->>>>>>> Stashed changes
-        # cv2.imshow('object detection 3', cv2.resize(image_np, (640, 480)))
-        cv2.imshow('object detection 2', image_np)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        print(str(corners) + ', {:1.2f}'.format(scores[0][0]))
+        cv2.imshow('object detection', image_np)
+
+        key = cv2.waitKey(speed)
+        if key == ord('d'):         # 'n' marks the image "no tennis ball"
+            count += 1
+        elif key == ord('a'):       # 'e' will erase last point and retry
+            count -= 1
+        elif key == ord('p'):
+            speed = 0
+        elif key == ord('1'):
+            speed = 100
+        elif key == ord('2'):
+            speed = 50
+        elif key == ord('3'):
+            speed = 25
+        elif key == ord('s'):
+            loc = os.path.expanduser('~/Pictures/tbpics/test_imgs/')
+            print('Saving file:',loc+filename)
+            cv2.imwrite(loc+filename, image_np)
+        elif key == ord('n'):
+            print(filename)
+        elif key == ord('q'):       # 'q' quits the program manually
             cv2.destroyAllWindows()
-            cap.release()
             break
+        else:
+            count += 1
 
     cv2.destroyAllWindows()
-    cap.release()
