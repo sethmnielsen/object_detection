@@ -1,3 +1,4 @@
+from __future__ import print_function
 import random
 import os
 import shutil
@@ -6,18 +7,13 @@ import argparse
 loc = './images/train/'
 testloc = './images/test/'
 
-test_count = 0
-for filename in os.listdir(testloc):
-    test_count += 1
+test_count = len(os.listdir(testloc))
 
 if test_count == 0:
-    file_count = 0;
-    for filename in  os.listdir(loc):
-        file_count += 1
-
+    file_count = len(os.listdir(loc))
     count = 0
     for filename in os.listdir(loc):
-        if filename.endswith('xml') and count <= file_count // 20:
+        if filename.endswith('xml') and count <= file_count // 10:
             filename_jpg = filename[:-3]+'jpg'
             filename_xml = filename
             print(filename_jpg,"-->",testloc+filename_jpg)

@@ -9,6 +9,10 @@
 *tennisball_graph*/
 *ssd_inception_v2_coco_2017_11_17/
 *ssd_mobilenet_v1_coco_2017_11_17/
-*training/
+*training/checkpoint
+*training/events*
+*training/graph*
+*training/model*
+*training/pipeline*
 *saved_model/
 *.pyc
