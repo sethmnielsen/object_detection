@@ -10,7 +10,7 @@
 - In the models/research/object_detection directory, run the following command, filling in XXXX with the # of last model checkpoint in training/:
 python export_inference_graph.py \
     --input_type image_tensor \
-    --pipeline_config_path training/ssd_mobilenet_v1_coco.config \
+    --pipeline_config_path training/ssd_inception_v2_coco.config \
     --trained_checkpoint_prefix training/model.ckpt-XXXX \
     --output_directory tennisball_graph
 - If you get "ImportError: No module named 'nets'", run (from the models/research/ dir):
