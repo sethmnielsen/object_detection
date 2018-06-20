@@ -56,19 +56,11 @@ category_index = label_map_util.create_category_index(categories)
 
 # # Detection
 # Choose video feed to be a video file (e.g. 'path/to/file') or a camera input (e.g. 0 or 1)
-<<<<<<< Updated upstream
 # cap = cv2.VideoCapture(os.path.expanduser('~/Videos/vid3.mp4'))
 cap = cv2.VideoCapture(os.path.expanduser('~/Videos/urc_autonomy/A4.MOV'))
 # cap = cv2.VideoCapture('/dev/videoZED')
 w = 1920
 h = 1080
-=======
-# cap = cv2.VideoCapture('/home/seth/Videos/vid3.mp4')
-cap = cv2.VideoCapture('/home/seth/Videos/urc_autonomy/A4.MOV')
-# cap = cv2.VideoCapture('/dev/videoZED')
-w = 640
-h = 480
->>>>>>> Stashed changes
 cap.set(3, w)
 cap.set(4, h)
 prev_score = 0
@@ -119,7 +111,6 @@ with detection_graph.as_default():
         height = y_max-y
         raw_score = scores[0][0]
         squareness = 1 - abs(length-height) / (length+height)
-<<<<<<< Updated upstream
         if squareness < 0:
             raw_score = 0
 
@@ -135,15 +126,6 @@ with detection_graph.as_default():
         else:
             corners = (-1, -1, -1, -1)
         # print str(corners) + ', {:1.2f}'.format(filt_score)
-=======
-        if scores[0][0] > .50 and squareness > .8:
-                # Instead of fancy probability box, show simple rectangle
-                # cv2.putText(image_np,"hello", (x,y), cv2.FONT_HERSHEY_TRIPLEX, 1, 255)
-                cv2.rectangle(image_np, (x, y), (x_max, y_max), (255,0,0), 2)
-        else:
-            corners = (-1, -1, -1, -1)
-        # print str(corners) + ', {:1.2f}'.format(scores[0][0])
->>>>>>> Stashed changes
         # cv2.imshow('object detection 3', cv2.resize(image_np, (640, 480)))
         cv2.imshow('object detection 2', image_np)
         if cv2.waitKey(1) & 0xFF == ord('q'):
